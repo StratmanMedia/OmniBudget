@@ -6,10 +6,10 @@ const routes: Routes = [
     path: 'dashboard',
     loadChildren: () => import('../dashboard/dashboard.module').then(m => m.DashboardModule)
   },
-  // {
-  //   path: 'accounts',
-  //   loadChildren: () => import('../accounts/accounts.module').then(m => m.AccountsModule)
-  // },
+  {
+    path: 'accounts',
+    loadChildren: () => import('../accounts/accounts.module').then(m => m.AccountsModule)
+  },
   // {
   //   path: 'categories',
   //   loadChildren: () => import('../categories/categories.module').then(m => m.CategoriesModule)
