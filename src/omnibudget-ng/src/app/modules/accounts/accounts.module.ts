@@ -5,6 +5,7 @@ import { AccountListComponent } from './pages/account-list/account-list.componen
 import { CreateAccountComponent } from './pages/create-account/create-account.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UpdateAccountComponent } from './pages/update-account/update-account.component';
+import { OmniBudgetCommonModule } from '../omni-budget-common/omni-budget-common.module';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { UpdateAccountComponent } from './pages/update-account/update-account.co
   ],
   imports: [
     CommonModule,
+    OmniBudgetCommonModule,
     ReactiveFormsModule,
     AccountsRoutingModule
   ]

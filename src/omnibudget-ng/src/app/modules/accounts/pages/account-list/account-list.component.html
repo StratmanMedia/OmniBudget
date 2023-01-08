@@ -1,21 +1,23 @@
-<div class="row mt-2">
-  <div class="col-md-12">
-    <a routerLink="/app/accounts/new" class="btn btn-primary"><i class="fas fa-plus"></i>&nbsp; Create Account</a>
+<omni-layout>
+  <div class="row mt-2">
+    <div class="col-md-12">
+      <a routerLink="/app/accounts/new" class="btn btn-primary"><i class="fas fa-plus"></i>&nbsp; Create Account</a>
+    </div>
   </div>
-</div>
-<div class="row mt-2">
-  <div class="col-md-12">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th scope="col">Name</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let account of accountList | async" (click)="editAccount(account.guid)">
-          <td>{{account.name}}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="row mt-2">
+    <div class="col-md-12">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let account of accountList | async" (click)="editAccount(account.guid)">
+            <td>{{account.name}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
+</omni-layout>

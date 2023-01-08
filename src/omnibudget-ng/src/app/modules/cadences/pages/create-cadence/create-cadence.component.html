@@ -1,7 +1,9 @@
-<div class="row mt-2">
-  <omni-cadence-form
-    [mode]="formModeEnum.CREATE"
-    (onSubmit)="onSubmit($event)"
-    (onCancel)="onCancel()">
-  </omni-cadence-form>
-</div>
+<omni-layout>
+  <div class="row mt-2">
+    <omni-cadence-form
+      [mode]="formModeEnum.CREATE"
+      (onSubmit)="onSubmit($event)"
+      (onCancel)="onCancel()">
+    </omni-cadence-form>
+  </div>
+</omni-layout>
