@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { UserLayoutComponent } from './modules/user-layout/components/user-layout/user-layout.component';
 
 const routes: Routes = [
   {
@@ -14,11 +13,10 @@ const routes: Routes = [
   },
   {
     path: 'app',
-    component: UserLayoutComponent,
     children: [
       {
         path: '',
-        loadChildren: () => import('./modules/user-layout/user-layout.module').then(m => m.UserLayoutModule)
+        loadChildren: () => import('./modules/omni-budget-common/omni-budget-common.module').then(m => m.OmniBudgetCommonModule)
       }
     ]
   }

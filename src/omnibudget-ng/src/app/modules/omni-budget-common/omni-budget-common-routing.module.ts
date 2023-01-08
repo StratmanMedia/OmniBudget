@@ -37,11 +37,10 @@ const routes: Routes = [
         loadChildren: () => import('../cadences/cadences.module').then(m => m.CadencesModule)
       }
     ]
-  }
-];
+  }];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class UserLayoutRoutingModule { }
+export class OmniBudgetCommonRoutingModule { }
