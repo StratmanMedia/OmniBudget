@@ -14,10 +14,14 @@ const routes: Routes = [
     path: 'categories',
     loadChildren: () => import('../categories/categories.module').then(m => m.CategoriesModule)
   },
-  // {
-  //   path: 'cadences',
-  //   loadChildren: () => import('../cadences/cadences.module').then(m => m.CadencesModule)
-  // }
+  {
+    path: 'cadences',
+    loadChildren: () => import('../cadences/cadences.module').then(m => m.CadencesModule)
+  },
+  {
+    path: '',
+    redirectTo: '/app/dashboard'
+  }
 ];
 
 @NgModule({

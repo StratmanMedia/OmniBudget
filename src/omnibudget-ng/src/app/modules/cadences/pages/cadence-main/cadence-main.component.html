@@ -1,29 +1,31 @@
-<div class="row mt-2">
-  <div class="col-md-12">
-    <a routerLink="/app/cadences/new" class="btn btn-primary"><i class="fas fa-plus"></i>&nbsp; Create Cadence</a>
+<omni-layout>
+  <div class="row mt-2">
+    <div class="col-md-12">
+      <a routerLink="/app/cadences/new" class="btn btn-primary"><i class="fas fa-plus"></i>&nbsp; Create Cadence</a>
+    </div>
   </div>
-</div>
-<div class="row mt-2">
-  <div class="col-md-12">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Account</th>
-          <th scope="col">Category</th>
-          <th scope="col">Amount</th>
-          <th scope="col">Cadence</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let cadence of cadenceList | async" (click)="editCadence(cadence.guid)">
-          <td>{{cadence.name}}</td>
-          <td>{{cadence.account?.name}}</td>
-          <td>{{cadence.category?.name}}</td>
-          <td>{{cadence.amount}}</td>
-          <td>{{cadence.interval}} {{cadence.timePeriod}}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="row mt-2">
+    <div class="col-md-12">
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Account</th>
+            <th scope="col">Category</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Cadence</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cadence of cadenceList | async" (click)="editCadence(cadence.guid)">
+            <td>{{cadence.name}}</td>
+            <td>{{cadence.account?.name}}</td>
+            <td>{{cadence.category?.name}}</td>
+            <td>{{cadence.amount}}</td>
+            <td>{{cadence.interval}} {{cadence.timePeriod}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
+</omni-layout>
