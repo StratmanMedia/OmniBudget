@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'omni-omni-layout',
+  selector: 'omni-layout',
   templateUrl: './omni-layout.component.html',
   styleUrls: ['./omni-layout.component.css']
 })

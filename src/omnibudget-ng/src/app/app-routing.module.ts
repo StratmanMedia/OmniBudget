@@ -4,22 +4,13 @@ import { Routes, RouterModule } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    children: [
-      {
-        path: '',
-        loadChildren: () => import('./modules/guest/guest.module').then(m => m.GuestModule)
-      }
-    ]
+    loadChildren: () => import('./modules/guest/guest.module').then(m => m.GuestModule)
   },
   {
     path: 'app',
-    children: [
-      {
-        path: '',
-        loadChildren: () => import('./modules/omni-budget-common/omni-budget-common.module').then(m => m.OmniBudgetCommonModule)
-      }
-    ]
-  }
+    loadChildren: () => import('./modules/omni-budget-common/omni-budget-common.module').then(m => m.OmniBudgetCommonModule)
+  },
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({
