@@ -1,0 +1,15 @@
+<div class="row">
+  <div *ngIf="accountForm" class="col-md-12">
+    <form [formGroup]="accountForm" (ngSubmit)="onSubmit()">
+      <div class="mt-2">
+        <label for="name">Account Name</label>
+        <input type="text" id="name" class="form-control" formControlName="name">
+        <small id="nameHelp" class="form-text text-muted">A friendly name for you to identify your account.</small>
+      </div>
+      <div class="mt-2">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> &nbsp; Save Changes</button> &nbsp;
+        <button type="button" class="btn btn-primary" (click)="onDelete()"><i class="fas fa-trash"></i> &nbsp; Delete</button>
+      </div>      
+    </form>
+  </div>
+</div>

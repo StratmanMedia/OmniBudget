@@ -1,0 +1,10 @@
+<div class="row">
+  <omni-category-form
+    *ngIf="category"
+    [mode]="formModeEnum.EDIT"
+    [category]="category"
+    (onSubmit)="onSubmit($event)"
+    (onCancel)="onCancel()"
+    (onDelete)="onDelete($event)">
+  </omni-category-form>
+</div>

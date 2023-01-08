@@ -1,0 +1,27 @@
+<div class="row">
+  <div class="col-md-12">
+    <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+      <div class="mt-2">
+        <label for="name">Category Name</label>
+        <input type="text" id="name" class="form-control" formControlName="name">
+        <small id="nameHelp" class="form-text text-muted">The name used to identify your category.</small>
+      </div>
+      <div class="mt-2">
+        <label for="description">Description</label>
+        <input type="text" id="description" class="form-control" formControlName="description">
+        <small id="descriptionHelp" class="form-text text-muted">The name used to identify your category.</small>
+      </div>
+      <div class="mt-2">
+        <label for="parent">Parent Category</label>
+        <select id="parent" class="form-select" (change)="parentChange($event)" formControlName="parent">
+          <option value=""></option>
+          <option *ngFor="let category of parentCategories | async" [value]="category.guid">{{category.name}}</option>
+        </select>
+        <small id="parentHelp" class="form-text text-muted">The category that this category is grouped under.</small>
+      </div>
+      <div class="mt-2">
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>

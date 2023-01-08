@@ -1,0 +1,21 @@
+<div class="row mt-2">
+  <div class="col-md-12">
+    <a routerLink="/app/categories/new" class="btn btn-primary"><i class="fas fa-plus"></i>&nbsp; New Category</a>
+  </div>
+</div>
+<div class="row mt-2">
+  <div class="col-md-12">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let category of categoryList | async" (click)="editCategory(category.guid)">
+          <td>{{category.name}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

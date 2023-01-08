@@ -1,0 +1,47 @@
+<div class="col-md-12">
+  <form [formGroup]="cadenceForm" (ngSubmit)="submitClicked()">
+    <div class="mt-2">
+      <label for="name" class="form-label">Cadence Name</label>
+      <input type="text" id="name" class="form-control" formControlName="name">
+    </div>
+    <div class="mt-2">
+      <label for="description">Description</label>
+      <input type="text" id="description" class="form-control" formControlName="description">
+    </div>
+    <div class="mt-2">
+      <label for="account">Account</label>
+      <select id="account" class="form-select" (change)="accountChange($event)" formControlName="account">
+        <option value=""></option>
+        <option *ngFor="let account of accounts | async" [value]="account.guid">{{account.name}}</option>
+      </select>
+    </div>
+    <div class="mt-2">
+      <label for="category">Category</label>
+      <select id="category" class="form-select" (change)="categoryChange($event)" formControlName="category">
+        <option value=""></option>
+        <option *ngFor="let category of categories | async" [value]="category.guid">{{category.name}}</option>
+      </select>
+    </div>
+    <div class="mt-2">
+      <label for="amount">Amount</label>
+      <input type="number" id="amount" class="form-control" formControlName="amount">
+    </div>
+    <div class="mt-2">
+      <label for="interval">Interval</label>
+      <input type="number" id="interval" class="form-control" formControlName="interval">
+    </div>
+    <div class="mt-2">
+      <label for="timePeriod">Time Period</label>
+      <select id="timePeriod" class="form-select" (change)="timePeriodChange($event)" formControlName="timePeriod">
+        <option value=""></option>
+        <option *ngFor="let timePeriod of timePeriods" [value]="timePeriod">{{timePeriod}}</option>
+      </select>
+    </div>
+    <div class="mt-2">
+      <span *ngIf="mode == formModeEnum.CREATE"><button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>&nbsp; Save</button>&nbsp;</span>
+      <span *ngIf="mode == formModeEnum.EDIT"><button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>&nbsp; Save Changes</button>&nbsp;</span>
+      <span><button type="button" class="btn btn-primary" (click)="cancelClicked()"><i class="fas fa-times"></i>&nbsp; Cancel</button>&nbsp;</span>
+      <span *ngIf="mode != formModeEnum.CREATE"><button type="button" class="btn btn-danger" (click)="deleteClicked()"><i class="fas fa-trash"></i>&nbsp; Delete</button></span>
+    </div>
+  </form>
+</div>

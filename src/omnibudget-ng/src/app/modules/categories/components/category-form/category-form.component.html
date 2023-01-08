@@ -1,0 +1,25 @@
+<div *ngIf="categoryForm" class="col-md-12">
+  <form [formGroup]="categoryForm" (ngSubmit)="submitClicked()">
+    <div class="mt-2">
+      <label for="name" class="form-label">Category Name</label>
+      <input type="text" id="name" class="form-control" formControlName="name">
+      <div id="nameHelp" class="form-text">We'll never share your email with anyone else.</div>
+    </div>
+    <div class="mt-2">
+      <label for="description">Description</label>
+      <input type="text" id="description" class="form-control" formControlName="description">
+    </div>
+    <div class="mt-2">
+      <label for="parent">Parent Category</label>
+      <select id="parent" class="form-select" (change)="parentChange($event)" formControlName="parent">
+        <option value=""></option>
+        <option *ngFor="let category of parentCategories | async" [value]="category.guid">{{category.name}}</option>
+      </select>
+    </div>
+    <div class="mt-2">
+      <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i>&nbsp; Save Changes</button>&nbsp;
+      <button type="button" class="btn btn-primary" (click)="cancelClicked()"><i class="fas fa-times"></i>&nbsp; Cancel</button>&nbsp;
+      <button type="button" class="btn btn-danger" (click)="deleteClicked()"><i class="fas fa-trash"></i>&nbsp; Delete</button>
+    </div>
+  </form>
+</div>
