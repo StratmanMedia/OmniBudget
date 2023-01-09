@@ -1,5 +1,5 @@
 <div class="col-md-12">
-  <form [formGroup]="cadenceForm" (ngSubmit)="submitClicked()">
+  <form [formGroup]="cadenceForm" (ngSubmit)="submitForm()">
     <div class="mt-2">
       <label for="name" class="form-label">Cadence Name</label>
       <input type="text" id="name" class="form-control" formControlName="name">
@@ -10,14 +10,14 @@
     </div>
     <div class="mt-2">
       <label for="account">Account</label>
-      <select id="account" class="form-select" (change)="accountChange($event)" formControlName="account">
+      <select id="account" class="form-select" (change)="changeAccount($event)" formControlName="account">
         <option value=""></option>
         <option *ngFor="let account of accounts | async" [value]="account.guid">{{account.name}}</option>
       </select>
     </div>
     <div class="mt-2">
       <label for="category">Category</label>
-      <select id="category" class="form-select" (change)="categoryChange($event)" formControlName="category">
+      <select id="category" class="form-select" (change)="changeCategory($event)" formControlName="category">
         <option value=""></option>
         <option *ngFor="let category of categories | async" [value]="category.guid">{{category.name}}</option>
       </select>
@@ -32,7 +32,7 @@
     </div>
     <div class="mt-2">
       <label for="timePeriod">Time Period</label>
-      <select id="timePeriod" class="form-select" (change)="timePeriodChange($event)" formControlName="timePeriod">
+      <select id="timePeriod" class="form-select" (change)="changeTimePeriod($event)" formControlName="timePeriod">
         <option value=""></option>
         <option *ngFor="let timePeriod of timePeriods" [value]="timePeriod">{{timePeriod}}</option>
       </select>

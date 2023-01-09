@@ -19,8 +19,8 @@
         <tbody>
           <tr *ngFor="let cadence of cadenceList | async" (click)="editCadence(cadence.guid)">
             <td>{{cadence.name}}</td>
-            <td>{{cadence.account?.name}}</td>
-            <td>{{cadence.category?.name}}</td>
+            <td>{{cadence.account.name}}</td>
+            <td>{{cadence.category.name}}</td>
             <td>{{cadence.amount}}</td>
             <td>{{cadence.interval}} {{cadence.timePeriod}}</td>
           </tr>
