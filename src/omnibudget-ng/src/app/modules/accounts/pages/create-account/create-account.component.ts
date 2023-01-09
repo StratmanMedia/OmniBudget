@@ -11,8 +11,10 @@ import { LoggingService } from 'src/app/core/logging/logging.service';
   styleUrls: ['./create-account.component.css']
 })
 export class CreateAccountComponent implements OnInit {
-
-  private _logger: LoggingService = new LoggingService('CreateAccountComponent');
+  private _logger: LoggingService = new LoggingService({
+    callerName: "CreateAccountComponent"
+  });
+  
   accountForm = new FormGroup({
     name: new FormControl('')
   });

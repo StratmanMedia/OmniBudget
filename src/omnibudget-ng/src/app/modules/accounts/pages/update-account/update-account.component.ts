@@ -1,17 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { first, Subject, takeUntil, tap } from 'rxjs';
 import { AccountModel } from 'src/app/core/accounts/account-model';
 import { AccountService } from 'src/app/core/accounts/account.service';
+import { LoggingService } from 'src/app/core/logging/logging.service';
 
 @Component({
   selector: 'app-update-account',
   templateUrl: './update-account.component.html',
   styleUrls: ['./update-account.component.css']
 })
-export class UpdateAccountComponent implements OnInit {
-
+export class UpdateAccountComponent implements OnInit, OnDestroy {
+  private _logger: LoggingService = new LoggingService({
+    callerName: "UpdateAccountComponent"
+  });
+  private ngDestroy$: Subject<boolean>;
   private _guid: string;
+
   accountForm: FormGroup;
 
   constructor(
@@ -23,14 +29,20 @@ export class UpdateAccountComponent implements OnInit {
 
   ngOnInit(): void {
     this._guid = this._route.snapshot.params['guid'];
-    this._accountService.getOne(this._guid).subscribe(
-      account => {
+    this._accountService.getOne(this._guid).pipe(
+      takeUntil(this.ngDestroy$),
+      tap(account => {
         if (account === undefined) {
           this._router.navigateByUrl('/app');
           return;
         }
         this.accountForm = this.buildForm(account);
-      });
+      })
+    ).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.ngDestroy$.next(true);
   }
 
   onSubmit() {
@@ -39,15 +51,21 @@ export class UpdateAccountComponent implements OnInit {
       guid: this.accountForm.get('guid')?.value,
       name: this.accountForm.get('name')?.value
     };
-    this._accountService.update(account).subscribe(() => {
-      this._router.navigateByUrl('/app/accounts');
-    });
+    this._accountService.update(this._guid, account).pipe(
+      first(),
+      tap(() => {
+        this._router.navigateByUrl('/app/accounts');
+      })
+    );
   }
 
   onDelete() {
-    this._accountService.delete(this._guid).subscribe(() => {
-      this._router.navigateByUrl('/app/accounts');
-    });
+    this._accountService.delete(this._guid).pipe(
+      first(),
+      tap(() => {
+        this._router.navigateByUrl('/app/accounts');
+      })
+    );
   }
 
   private buildForm(account: AccountModel|null = null): FormGroup {
