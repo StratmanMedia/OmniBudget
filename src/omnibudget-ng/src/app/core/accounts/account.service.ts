@@ -10,12 +10,10 @@ import { AccountModel } from './account-model';
   providedIn: 'root'
 })
 export class AccountService extends DataService<AccountModel> {
-  private _logger: LoggingService = new LoggingService({
-    callerName: "AccountService"
-  });
-
   logger(): LoggingService {
-    return this._logger;
+    return new LoggingService({
+      callerName: "AccountService"
+    });
   }
 
   localStorageKey(): string {
@@ -23,7 +21,7 @@ export class AccountService extends DataService<AccountModel> {
   }
 
   modifyDataBeforeAdd(data: AccountModel): void {
-    data.guid = Guid.newGuid.toString();
+    data.guid = Guid.newGuid().toString();
   }
 
   findExistingItem(id: string | number): Observable<AccountModel | undefined> {
@@ -34,15 +32,15 @@ export class AccountService extends DataService<AccountModel> {
     );
   }
 
-  updateData(current: AccountModel, updated: AccountModel): void {
-    current.name = updated.name;
-  }
-
   findIndex(id: string | number): Observable<number> {
     return this._data$.pipe(
       map(accounts => {
         return accounts.findIndex(a => a.guid === id);
       })
     );
+  }
+
+  updateData(current: AccountModel, updated: AccountModel): void {
+    current.name = updated.name;
   }
 }

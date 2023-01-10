@@ -13,8 +13,8 @@ export class StorageService {
 
   constructor() { }
 
-  create(key: string, data: any): Observable<void> {
-    this._logger.debug(`create ENTER.`);
+  save(key: string, data: any): Observable<void> {
+    this._logger.debug(`save ENTER.`);
     return new Observable((o: Observer<void>) => {
       const json = JSON.stringify(data);
       this._logger.debug(`Adding to local storage. key=${key}, data=${json}`);
@@ -33,17 +33,6 @@ export class StorageService {
       o.next(data);
       o.complete();
     });
-  }
-
-  update(key: string, data: any): Observable<void> {
-    this._logger.debug(`update ENTER.`);
-    return new Observable((o: Observer<void>) => {
-      const json = JSON.stringify(data);
-      this._logger.debug(`Updating local storage. Key=${key}, Data=${json}`);
-      this._store.setItem(key, json);
-      o.next();
-      o.complete();
-    });    
   }
 
   delete(key: string): Observable<void> {

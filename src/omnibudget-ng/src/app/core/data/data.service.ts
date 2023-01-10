@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, combineLatest, concatMap, first, map, Observable, of, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, combineLatest, concatMap, first, map, Observable } from 'rxjs';
 import { LoggingService } from '../logging/logging.service';
 import { StorageService } from '../storage/storage.service';
 
@@ -7,7 +7,6 @@ import { StorageService } from '../storage/storage.service';
   providedIn: 'root'
 })
 export abstract class DataService<T> {
-  private ngDestroy$ = new Subject<boolean>();
   protected _data$ = new BehaviorSubject<T[]>([]);
   
   constructor(
@@ -15,12 +14,11 @@ export abstract class DataService<T> {
 
     this.loadFromStorage();
     this._data$.pipe(
-      takeUntil(this.ngDestroy$),
       concatMap((data: T[]) => {
         this.logger().debug(`New data emitted. data=${JSON.stringify(data)}`);
-        return this._storage.update(this.localStorageKey(), data);
+        return this._storage.save(this.localStorageKey(), data).pipe(first());
       })
-    );
+    ).subscribe();
   }
 
   add(newData: T): Observable<void> {
@@ -40,21 +38,13 @@ export abstract class DataService<T> {
   }
 
   getOne(id: string | number): Observable<T | undefined> {
-    return this._data$.pipe(
-      concatMap(data => {
-        return this.findExistingItem(id);
-      })
-    );
+    return this.findExistingItem(id);
   }
 
   update(id: string | number, updatedData: T): Observable<void> {
     this.logger().debug(`Updating data=${JSON.stringify(updatedData)}`);
-    return this._data$.pipe(
+    return combineLatest([this._data$, this.findExistingItem(id)]).pipe(
       first(),
-      concatMap(data => {
-        const existing = this.findExistingItem(id);
-        return combineLatest([of(data), existing]);
-      }),
       map(([data, existing]) => {
         if (!existing) { return; }
         this.updateData(existing, updatedData);
@@ -65,12 +55,8 @@ export abstract class DataService<T> {
 
   delete(id: string | number): Observable<void> {
     this.logger().debug(`Deleting data. id=${id}`);
-    return this._data$.pipe(
+    return combineLatest([this._data$, this.findIndex(id)]).pipe(
       first(),
-      concatMap(data => {
-        const index = this.findIndex(id);
-        return combineLatest([of(data), index]);
-      }),
       map(([data, index]) => {
         data.splice(index, 1);
         this._data$.next(data);
@@ -90,13 +76,13 @@ export abstract class DataService<T> {
         }
         this._data$.next(data);
       })
-    );
+    ).subscribe();
   }
 
   abstract logger(): LoggingService;
   abstract localStorageKey(): string;
   abstract modifyDataBeforeAdd(data: T): void;
   abstract findExistingItem(id: string | number): Observable<T | undefined>;
-  abstract updateData(current: T, updated: T): void;
   abstract findIndex(id: string | number): Observable<number>;
+  abstract updateData(current: T, updated: T): void;
 }

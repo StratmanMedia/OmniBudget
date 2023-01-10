@@ -15,7 +15,7 @@ export class UpdateAccountComponent implements OnInit, OnDestroy {
   private _logger: LoggingService = new LoggingService({
     callerName: "UpdateAccountComponent"
   });
-  private ngDestroy$: Subject<boolean>;
+  private ngDestroy$ = new Subject<boolean>();
   private _guid: string;
 
   accountForm: FormGroup;
@@ -46,7 +46,7 @@ export class UpdateAccountComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    console.log(this.accountForm.value);
+    this._logger.debug(`Form submitted. form=${JSON.stringify(this.accountForm.value)}`);
     const account = <AccountModel>{
       guid: this.accountForm.get('guid')?.value,
       name: this.accountForm.get('name')?.value
@@ -56,7 +56,7 @@ export class UpdateAccountComponent implements OnInit, OnDestroy {
       tap(() => {
         this._router.navigateByUrl('/app/accounts');
       })
-    );
+    ).subscribe();
   }
 
   onDelete() {
@@ -65,13 +65,13 @@ export class UpdateAccountComponent implements OnInit, OnDestroy {
       tap(() => {
         this._router.navigateByUrl('/app/accounts');
       })
-    );
+    ).subscribe();
   }
 
-  private buildForm(account: AccountModel|null = null): FormGroup {
+  private buildForm(account: AccountModel): FormGroup {
     return this._formBuilder.group({
-      guid: [account?.guid],
-      name: [account?.name]
+      guid: [account.guid],
+      name: [account.name]
     });
   }
 }
