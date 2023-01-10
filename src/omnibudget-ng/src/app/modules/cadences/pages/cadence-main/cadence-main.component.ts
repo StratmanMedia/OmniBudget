@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { combineLatest, map, Observable, Subject } from 'rxjs';
+import { combineLatest, map, Observable, Subject, takeUntil } from 'rxjs';
 import { AccountService } from 'src/app/core/accounts/account.service';
 import { CategoryService } from 'src/app/core/categories/category.service';
 import { LoggingService } from 'src/app/core/logging/logging.service';
@@ -15,7 +15,7 @@ export class CadenceMainComponent implements OnInit {
   private _logger: LoggingService = new LoggingService({
     callerName: "CadenceMainComponent"
   });
-  private ngDestroy$: Subject<boolean>;
+  private ngDestroy$ = new Subject<boolean>();
 
   cadenceList: Observable<CadenceModel[]>;
 
@@ -30,6 +30,7 @@ export class CadenceMainComponent implements OnInit {
       this._accountService.getAll(),
       this._categoryService.getAll()
     ]).pipe(
+      takeUntil(this.ngDestroy$),
       map(([cadences, accounts, categories]) => {
         cadences.map(cadence => ({
           ...cadence,

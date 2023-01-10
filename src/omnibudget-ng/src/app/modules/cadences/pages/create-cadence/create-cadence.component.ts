@@ -15,7 +15,7 @@ export class CreateCadenceComponent implements OnInit {
   private _logger: LoggingService = new LoggingService({
     callerName: "CadenceMainComponent"
   });
-  private ngDestroy$: Subject<boolean>;
+  private ngDestroy$ = new Subject<boolean>();
   
   constructor(
     private _router: Router,
@@ -29,7 +29,7 @@ export class CreateCadenceComponent implements OnInit {
   }
 
   onSubmit(cadence: CadenceModel): void {
-    this._logger.debug(`Submitting cadence form. Data=${JSON.stringify(cadence)}`);
+    this._logger.debug(`Form submitted. Data=${JSON.stringify(cadence)}`);
     this._cadenceService.add(cadence).pipe(
       first(),
       map(() => {

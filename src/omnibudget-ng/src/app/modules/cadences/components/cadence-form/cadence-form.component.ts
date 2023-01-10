@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { map, Observable, Subject, takeUntil } from 'rxjs';
+import { combineLatest, map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { AccountModel } from 'src/app/core/accounts/account-model';
 import { AccountService } from 'src/app/core/accounts/account.service';
 import { CategoryModel } from 'src/app/core/categories/category-model';
@@ -20,10 +20,10 @@ export class CadenceFormComponent implements OnInit {
   private _logger: LoggingService = new LoggingService({
     callerName: "CadenceFormComponent"
   });
-  private ngDestroy$: Subject<boolean>;
+  private ngDestroy$ = new Subject<boolean>();
   
   @Input() mode: FormMode;
-  @Input() cadence: CadenceModel;
+  @Input() cadence: CadenceModel | undefined;
   @Output() onSubmit: EventEmitter<CadenceModel> = new EventEmitter<CadenceModel>();
   @Output() onCancel: EventEmitter<void> = new EventEmitter();
   @Output() onDelete: EventEmitter<string> = new EventEmitter<string>();
@@ -41,6 +41,11 @@ export class CadenceFormComponent implements OnInit {
   ngOnInit(): void {
     this._logger.debug(`Initializing.`);
     this.cadenceForm = this.buildForm(this.cadence);
+    combineLatest([this._accountService.getAll(), this._categoryService.getAll()]).pipe(
+      tap(_ => {
+        this.cadenceForm = this.buildForm(this.cadence);
+      })
+    );
     this.accounts = this._accountService.getAll().pipe(
       takeUntil(this.ngDestroy$),
       map(accounts => {
@@ -73,10 +78,10 @@ export class CadenceFormComponent implements OnInit {
   }
 
   submitForm() {
-    this._logger.debug(`Cadence form submitted. form=${JSON.stringify(this.cadenceForm.value)}`);
+    this._logger.debug(`Form submitted. form=${JSON.stringify(this.cadenceForm.value)}`);
     const timePeriod = <string>this.cadenceForm.get('timePeriod')?.value;
     const cadence = <CadenceModel>{
-      guid: this.cadence.guid,
+      guid: this.cadence?.guid,
       name: this.cadenceForm.get('name')?.value,
       description: this.cadenceForm.get('description')?.value,
       accountGuid: this.cadenceForm.get('account')?.value,
@@ -93,19 +98,19 @@ export class CadenceFormComponent implements OnInit {
   }
 
   deleteClicked() {
-    this.onDelete.emit(this.cadence.guid);
+    this.onDelete.emit(this.cadence?.guid);
   }
 
-  private buildForm(cadence: CadenceModel): FormGroup {
+  private buildForm(cadence: CadenceModel | undefined): FormGroup {
     return this._formBuilder.group({
-      guid: [cadence.guid],
-      name: [cadence.name],
-      description: [cadence.description],
-      account: [cadence.accountGuid],
-      category: [cadence.categoryGuid],
-      amount: [cadence.amount],
-      interval: [cadence.interval],
-      timePeriod: [cadence.timePeriod]
+      guid: [cadence?.guid],
+      name: [cadence?.name],
+      description: [cadence?.description],
+      account: [cadence?.accountGuid],
+      category: [cadence?.categoryGuid],
+      amount: [cadence?.amount],
+      interval: [cadence?.interval],
+      timePeriod: [cadence?.timePeriod]
     });
   }
 }

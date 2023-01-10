@@ -10,12 +10,10 @@ import { CategoryModel } from './category-model';
   providedIn: 'root'
 })
 export class CategoryService extends DataService<CategoryModel> {
-  private _logger: LoggingService = new LoggingService({
-    callerName: "CategoryService"
-  });
-
   logger(): LoggingService{
-    return this._logger;
+    return new LoggingService({
+      callerName: "CategoryService"
+    });
   }
 
   localStorageKey(): string {
@@ -34,17 +32,17 @@ export class CategoryService extends DataService<CategoryModel> {
     );
   }
 
-  updateData(current: CategoryModel, updated: CategoryModel): void {
-    current.name = updated.name;
-    current.description = updated.description;
-    current.parentCategoryGuid = updated.parentCategoryGuid;
-  }
-
   findIndex(id: string | number): Observable<number> {
     return this._data$.pipe(
       map(categories => {
         return categories.findIndex(c => c.guid === id);
       })
     );
+  }
+
+  updateData(current: CategoryModel, updated: CategoryModel): void {
+    current.name = updated.name;
+    current.description = updated.description;
+    current.parentCategoryGuid = updated.parentCategoryGuid;
   }
 }

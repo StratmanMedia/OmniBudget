@@ -11,10 +11,6 @@ import { CadenceModel } from './cadence-model';
   providedIn: 'root'
 })
 export class CadenceService extends DataService<CadenceModel> {
-  private _logger: LoggingService = new LoggingService({
-    callerName: "CadenceService"
-  });
-
   constructor(
     _storage: StorageService) {
       //todo: need to inject the budget service
@@ -22,7 +18,9 @@ export class CadenceService extends DataService<CadenceModel> {
   }
 
   logger(): LoggingService {
-    return this._logger;
+    return new LoggingService({
+      callerName: "CadenceService"
+    });
   }
   
   localStorageKey(): string {
@@ -41,6 +39,14 @@ export class CadenceService extends DataService<CadenceModel> {
     );
   }
 
+  findIndex(id: string | number): Observable<number> {
+    return this._data$.pipe(
+      map(cadences => {
+        return cadences.findIndex(c => c.guid === id);
+      })
+    );
+  }
+
   updateData(current: CadenceModel, updated: CadenceModel): void {
     current.name = updated.name;
     current.description = updated.description;
@@ -49,14 +55,6 @@ export class CadenceService extends DataService<CadenceModel> {
     current.amount = updated.amount;
     current.interval = updated.interval;
     current.timePeriod = updated.timePeriod;
-  }
-
-  findIndex(id: string | number): Observable<number> {
-    return this._data$.pipe(
-      map(cadences => {
-        return cadences.findIndex(c => c.guid === id);
-      })
-    );
   }
 
   override add(data: CadenceModel): Observable<void> {
