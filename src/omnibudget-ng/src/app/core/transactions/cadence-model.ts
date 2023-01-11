@@ -7,9 +7,9 @@ export interface CadenceModel {
   name: string;
   description: string;
   accountGuid: string;
-  account: AccountModel;
+  account?: AccountModel;
   categoryGuid: string;
-  category: CategoryModel;
+  category?: CategoryModel;
   amount: number;
   interval: number;
   timePeriod: TimePeriod;

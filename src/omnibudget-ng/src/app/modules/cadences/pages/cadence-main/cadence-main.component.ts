@@ -32,12 +32,16 @@ export class CadenceMainComponent implements OnInit {
     ]).pipe(
       takeUntil(this.ngDestroy$),
       map(([cadences, accounts, categories]) => {
-        cadences.map(cadence => ({
-          ...cadence,
-          account: accounts.find(acc => acc.guid === cadence.accountGuid),
-          category: categories.find(cat => cat.guid === cadence.categoryGuid)
-        } as CadenceModel));
-        return cadences;
+        this._logger.debug(`New data emitted. cadences=${JSON.stringify(cadences)}, accounts=${JSON.stringify(accounts)}, categories=${JSON.stringify(categories)}`);
+        const cadenceList = cadences.map(cadence => {
+          return <CadenceModel>{
+            ...cadence,
+            account: accounts.find(acc => acc.guid === cadence.accountGuid),
+            category: categories.find(cat => cat.guid === cadence.categoryGuid)
+          };
+        });
+        this._logger.debug(`Cadences mapped. cadenceList=${JSON.stringify(cadenceList)}`);
+        return cadenceList;
       })
     );
   }
