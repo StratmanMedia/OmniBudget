@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BudgetsService } from './budgets.service';
+import { CadenceService } from './cadence.service';
 
-describe('BudgetsService', () => {
-  let service: BudgetsService;
+describe('CadenceService', () => {
+  let service: CadenceService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(BudgetsService);
+    service = TestBed.inject(CadenceService);
   });
 
   it('should be created', () => {

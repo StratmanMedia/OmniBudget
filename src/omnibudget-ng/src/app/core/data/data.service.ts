@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, Observer, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, combineLatest, concatMap, first, map, Observable } from 'rxjs';
 import { LoggingService } from '../logging/logging.service';
 import { StorageService } from '../storage/storage.service';
 
@@ -7,82 +7,82 @@ import { StorageService } from '../storage/storage.service';
   providedIn: 'root'
 })
 export abstract class DataService<T> {
-  protected _dataStore: T[] = [];
-  protected _dataStoreSubject = new ReplaySubject<T[]>(1);
+  protected _data$ = new BehaviorSubject<T[]>([]);
   
   constructor(
     private _storage: StorageService) {
-      this.refreshStore();
-      this._dataStoreSubject.subscribe(
-        (data: T[]) => {
-          this.logger().debug('Updating local storage.');
-          this._storage.update(this.getLocalStorageKey(), data).subscribe();
-        });
-    }
 
-    add(data: T): Observable<void> {
-      this.logger().debug(`Add data=${JSON.stringify(data)}`);
-      return new Observable((o: Observer<void>) => {
-        this.modifyDataBeforeAdd(data);
-        this._dataStore.push(data);
-        this._dataStoreSubject.next(this._dataStore);
-        o.next();
-        o.complete();
-      });
-    }
+    this.loadFromStorage();
+    this._data$.pipe(
+      concatMap((data: T[]) => {
+        this.logger().debug(`New data emitted. data=${JSON.stringify(data)}`);
+        return this._storage.save(this.localStorageKey(), data).pipe(first());
+      })
+    ).subscribe();
+  }
+
+  add(newData: T): Observable<void> {
+    this.logger().debug(`Adding data. data=${JSON.stringify(newData)}`);
+    return this._data$.pipe(
+      first(),
+      map(data => {
+        this.modifyDataBeforeAdd(newData);
+        data.push(newData);
+        this._data$.next(data);
+      })
+    );
+  }
     
-    getAll(): Observable<T[]> {
-      return this._dataStoreSubject.asObservable();
-    }
+  getAll(): Observable<T[]> {
+    return this._data$.asObservable();
+  }
 
-    getOne(id: string | number): Observable<T | undefined> {
-      return new Observable((o: Observer<T | undefined>) => {
-        const item = this.findExistingItem(id);
-        o.next(item);
-      });
-    }
+  getOne(id: string | number): Observable<T | undefined> {
+    return this.findExistingItem(id);
+  }
 
-    update(id: string | number, data: T): Observable<void> {
-      this.logger().debug(`Update data=${JSON.stringify(data)}`);
-      return new Observable((o: Observer<void>) => {
-        let existing = this.findExistingItem(id);
-        if (existing == null || existing == undefined) {
-          o.error('Data does not exist.');
-          o.complete();
+  update(id: string | number, updatedData: T): Observable<void> {
+    this.logger().debug(`Updating data=${JSON.stringify(updatedData)}`);
+    return combineLatest([this._data$, this.findExistingItem(id)]).pipe(
+      first(),
+      map(([data, existing]) => {
+        if (!existing) { return; }
+        this.updateData(existing, updatedData);
+        this._data$.next(data);
+      })
+    );
+  }
+
+  delete(id: string | number): Observable<void> {
+    this.logger().debug(`Deleting data. id=${id}`);
+    return combineLatest([this._data$, this.findIndex(id)]).pipe(
+      first(),
+      map(([data, index]) => {
+        data.splice(index, 1);
+        this._data$.next(data);
+      })
+    );
+  }
+
+  private loadFromStorage(): void {
+    this.logger().debug('Data store refresh.');
+    this._storage.read<T[]>(this.localStorageKey()).pipe(
+      first(),
+      map(data => {
+        this.logger().debug(`Local storage=${JSON.stringify(data)}`);
+        if (!data) {
+          this._data$.next([]);
           return;
         }
-        this.updateData(existing, data);
-        this._dataStoreSubject.next(this._dataStore);
-        o.next();
-        o.complete();
-      });
-    }
+        this._data$.next(data);
+      })
+    ).subscribe();
+  }
 
-    delete(id: string | number): Observable<void> {
-      this.logger().debug(`Delete data. id=${id}`);
-      return new Observable((o: Observer<void>) => {
-        const index = this.findIndex(id);
-        this._dataStore.splice(index, 1);
-        this._dataStoreSubject.next(this._dataStore);
-        o.next();
-        o.complete();
-      });
-    }
-
-    private refreshStore(): void {
-      this.logger().debug('Data store refresh.');
-      this._storage.read<T[]>(this.getLocalStorageKey()).subscribe(
-        (data: T[]) => {
-          this.logger().debug(`Data store=${JSON.stringify(data)}`);
-          this._dataStore = data;
-          this._dataStoreSubject.next(data);
-        });
-    }
-
-    abstract logger(): LoggingService;
-    abstract getLocalStorageKey(): string;
-    abstract modifyDataBeforeAdd(data: T): void;
-    abstract findExistingItem(id: string | number): T | undefined;
-    abstract updateData(current: T, updated: T): void;
-    abstract findIndex(id: string | number): number;
+  abstract logger(): LoggingService;
+  abstract localStorageKey(): string;
+  abstract modifyDataBeforeAdd(data: T): void;
+  abstract findExistingItem(id: string | number): Observable<T | undefined>;
+  abstract findIndex(id: string | number): Observable<number>;
+  abstract updateData(current: T, updated: T): void;
 }

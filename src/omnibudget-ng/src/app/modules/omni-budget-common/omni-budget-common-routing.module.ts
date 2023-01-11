@@ -17,10 +17,6 @@ const routes: Routes = [
   {
     path: 'cadences',
     loadChildren: () => import('../cadences/cadences.module').then(m => m.CadencesModule)
-  },
-  {
-    path: '',
-    redirectTo: '/app/dashboard'
   }
 ];
 

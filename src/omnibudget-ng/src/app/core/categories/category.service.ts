@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { map, Observable } from 'rxjs';
 import { Guid } from 'src/app/shared/classes/guid';
 import { LocalStorageKeys } from 'src/app/shared/classes/local-storage-keys';
 import { DataService } from '../data/data.service';
@@ -10,10 +11,12 @@ import { CategoryModel } from './category-model';
 })
 export class CategoryService extends DataService<CategoryModel> {
   logger(): LoggingService{
-    return new LoggingService("CategoryService");
+    return new LoggingService({
+      callerName: "CategoryService"
+    });
   }
 
-  getLocalStorageKey(): string {
+  localStorageKey(): string {
     return LocalStorageKeys.categoryStore;
   }
 
@@ -21,17 +24,25 @@ export class CategoryService extends DataService<CategoryModel> {
     data.guid = Guid.newGuid().toString();
   }
 
-  findExistingItem(id: string | number): CategoryModel | undefined {
-    return this._dataStore.find(a => a.guid === id);
+  findExistingItem(id: string | number): Observable<CategoryModel | undefined> {
+    return this._data$.pipe(
+      map(categories => {
+        return categories.find(c => c.guid === id);
+      })
+    );
+  }
+
+  findIndex(id: string | number): Observable<number> {
+    return this._data$.pipe(
+      map(categories => {
+        return categories.findIndex(c => c.guid === id);
+      })
+    );
   }
 
   updateData(current: CategoryModel, updated: CategoryModel): void {
     current.name = updated.name;
     current.description = updated.description;
     current.parentCategoryGuid = updated.parentCategoryGuid;
-  }
-
-  findIndex(id: string | number): number {
-    return this._dataStore.findIndex(a => a.guid === id);
   }
 }

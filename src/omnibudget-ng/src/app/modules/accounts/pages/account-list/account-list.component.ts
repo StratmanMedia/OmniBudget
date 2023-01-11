@@ -11,15 +11,15 @@ import { LoggingService } from 'src/app/core/logging/logging.service';
   styleUrls: ['./account-list.component.css']
 })
 export class AccountListComponent implements OnInit {
+  private _logger: LoggingService = new LoggingService({
+    callerName: "AccountListComponent"
+  });
 
-  private _logger: LoggingService = new LoggingService('AccountListComponent');
-  accountList: Observable<AccountModel[]>;
+  accountList = this._accountService.getAll();
 
   constructor(
     private _accountService: AccountService,
-    private _router: Router) {
-      this.accountList = this._accountService.getAll();
-    }
+    private _router: Router) { }
 
   ngOnInit(): void {
   }
