@@ -8,7 +8,8 @@
           <small id="nameHelp" class="form-text text-muted">A friendly name for you to identify your account.</small>
         </div>
         <div class="mt-2">
-          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> &nbsp; Save Changes</button> &nbsp;
+          <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> &nbsp; Save Changes</button>&nbsp;
+          <button type="button" class="btn btn-primary" (click)="cancelClicked()"><i class="fas fa-times"></i>&nbsp; Cancel</button>&nbsp;
           <button type="button" class="btn btn-primary" (click)="onDelete()"><i class="fas fa-trash"></i> &nbsp; Delete</button>
         </div>      
       </form>
