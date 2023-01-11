@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { map, Observable, Subject } from 'rxjs';
+import { map, Observable, Subject, takeUntil, tap } from 'rxjs';
 import { CategoryModel } from 'src/app/core/categories/category-model';
 import { CategoryService } from 'src/app/core/categories/category.service';
 import { LoggingService } from 'src/app/core/logging/logging.service';
@@ -16,12 +16,13 @@ export class CategoryFormComponent implements OnInit {
   private _logger: LoggingService = new LoggingService({
     callerName: "CategoryFormComponent"
   });
-  private ngDestroy$: Subject<boolean>;
+  private ngDestroy$ = new Subject<boolean>();
+  private _category: CategoryModel | undefined;
   
   categoryForm: FormGroup;
   parentCategories: Observable<CategoryModel[]>;
   @Input() mode: FormMode;
-  @Input() category: CategoryModel|null;
+  @Input() category: Observable<CategoryModel | undefined>;
   @Output() onSubmit: EventEmitter<CategoryModel> = new EventEmitter<CategoryModel>();
   @Output() onCancel: EventEmitter<void> = new EventEmitter();
   @Output() onDelete: EventEmitter<string> = new EventEmitter<string>();
@@ -33,7 +34,15 @@ export class CategoryFormComponent implements OnInit {
 
   ngOnInit(): void {
     this._logger.debug(`Initializing.`);
-    this.categoryForm = this.buildForm(this.category);
+    this.categoryForm = this.buildForm(this._category);
+    this.category.pipe(
+      takeUntil(this.ngDestroy$),
+      tap(category => {
+        this._category = category;
+        this.categoryForm = this.buildForm(this._category);
+      })
+    ).subscribe();
+    this.categoryForm = this.buildForm(this._category);
     this.parentCategories = this._categoryService.getAll().pipe(
       map(categories => {
         return categories.sort((a, b) => { return SortUtil.sort(a.name, b.name) });
@@ -61,10 +70,10 @@ export class CategoryFormComponent implements OnInit {
   }
 
   deleteClicked() {
-    this.onDelete.emit(this.category?.guid);
+    this.onDelete.emit(this._category?.guid);
   }
 
-  private buildForm(category: CategoryModel|null = null): FormGroup {
+  private buildForm(category: CategoryModel | undefined): FormGroup {
     return this._formBuilder.group({
       guid: [category?.guid],
       name: [category?.name],

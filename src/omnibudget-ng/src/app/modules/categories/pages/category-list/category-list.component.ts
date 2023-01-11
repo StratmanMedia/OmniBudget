@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, Observable, Subject } from 'rxjs';
+import { map, Observable, Subject, takeUntil } from 'rxjs';
 import { CategoryModel } from 'src/app/core/categories/category-model';
 import { CategoryService } from 'src/app/core/categories/category.service';
 import { LoggingService } from 'src/app/core/logging/logging.service';
@@ -15,7 +15,7 @@ export class CategoryListComponent implements OnInit {
   private _logger: LoggingService = new LoggingService({
     callerName: "CategoryListComponent"
   });
-  private ngDestroy$: Subject<boolean>;
+  private ngDestroy$ = new Subject<boolean>();
 
   categoryList: Observable<CategoryModel[]>;
 
@@ -25,6 +25,7 @@ export class CategoryListComponent implements OnInit {
 
   ngOnInit(): void {
     this.categoryList = this._categoryService.getAll().pipe(
+      takeUntil(this.ngDestroy$),
       map(categories => {
         return categories.sort((a, b) => { return SortUtil.sort(a.name, b.name); });
       })

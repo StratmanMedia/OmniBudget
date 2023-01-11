@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { first, map, Subject } from 'rxjs';
+import { first, map, Observable, Subject } from 'rxjs';
 import { CategoryModel } from 'src/app/core/categories/category-model';
 import { CategoryService } from 'src/app/core/categories/category.service';
 import { LoggingService } from 'src/app/core/logging/logging.service';
@@ -15,10 +15,10 @@ export class UpdateCategoryComponent implements OnInit {
   private _logger: LoggingService = new LoggingService({
     callerName: "UpdateCategoryComponent"
   });
-  private ngDestroy$: Subject<boolean>;
+  private ngDestroy$ = new Subject<boolean>();
   private _guid: string;
 
-  category: CategoryModel;
+  category: Observable<CategoryModel | undefined>;
 
   constructor(
     private _route: ActivatedRoute,
@@ -28,14 +28,15 @@ export class UpdateCategoryComponent implements OnInit {
 
   ngOnInit(): void {
     this._guid = this._route.snapshot.params['guid'];
-    this._categoryService.getOne(this._guid).pipe(
+    this.category = this._categoryService.getOne(this._guid).pipe(
       map(category => {
-        if (category === undefined) {
+        if (!category) {
           this._router.navigateByUrl('/categories');
           return;
+        } else {
+          this._logger.debug(`Category loaded. Data=${JSON.stringify(category)}`);
+          return category;
         }
-        this._logger.debug(`Category loaded. Data=${JSON.stringify(category)}`);
-        this.category = category;
       })
     );
   }
@@ -45,7 +46,7 @@ export class UpdateCategoryComponent implements OnInit {
   }
 
   onSubmit(category: CategoryModel): void {
-    this._categoryService.update(this.category.guid, category).pipe(
+    this._categoryService.update(category.guid, category).pipe(
       first(),
       map(() => {
         this._router.navigateByUrl('/app/categories');

@@ -16,7 +16,7 @@ export class CreateCategoryComponent implements OnInit {
   private _logger: LoggingService = new LoggingService({
     callerName: "CreateCategoryComponent"
   });
-  private ngDestroy$: Subject<boolean>;
+  private ngDestroy$ = new Subject<boolean>();
   
   categoryForm = new FormGroup({
     name: new FormControl(''),
@@ -42,7 +42,7 @@ export class CreateCategoryComponent implements OnInit {
   }
 
   onSubmit() {
-    this._logger.debug(`Submitting category form. Data=${JSON.stringify(this.categoryForm.value)}`);
+    this._logger.debug(`Form submitted. Data=${JSON.stringify(this.categoryForm.value)}`);
     const category = <CategoryModel>{
       name: this.categoryForm.get('name')?.value,
       description: this.categoryForm.get('description')?.value,
