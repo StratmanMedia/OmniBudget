@@ -55,4 +55,8 @@ export class CreateCategoryComponent implements OnInit {
       })
     ).subscribe();
   }
+
+  cancelClicked(): void {
+    this._router.navigateByUrl('/app/categories');
+  }
 }

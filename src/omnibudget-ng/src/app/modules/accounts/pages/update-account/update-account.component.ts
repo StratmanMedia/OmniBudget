@@ -58,6 +58,10 @@ export class UpdateAccountComponent implements OnInit, OnDestroy {
       })
     ).subscribe();
   }
+  
+  cancelClicked(): void {
+    this._router.navigateByUrl('/app/accounts');
+  }
 
   onDelete() {
     this._accountService.delete(this._guid).pipe(

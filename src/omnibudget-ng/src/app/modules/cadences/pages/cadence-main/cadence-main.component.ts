@@ -5,6 +5,7 @@ import { CategoryService } from 'src/app/core/categories/category.service';
 import { LoggingService } from 'src/app/core/logging/logging.service';
 import { CadenceModel } from 'src/app/core/transactions/cadence-model';
 import { CadenceService } from 'src/app/core/transactions/cadence.service';
+import { SortUtil } from 'src/app/shared/classes/sort-util';
 
 @Component({
   selector: 'omni-cadence-main',
@@ -41,7 +42,7 @@ export class CadenceMainComponent implements OnInit {
           };
         });
         this._logger.debug(`Cadences mapped. cadenceList=${JSON.stringify(cadenceList)}`);
-        return cadenceList;
+        return cadenceList.sort((a, b) => { return SortUtil.sort(a.name, b.name); });
       })
     );
   }
