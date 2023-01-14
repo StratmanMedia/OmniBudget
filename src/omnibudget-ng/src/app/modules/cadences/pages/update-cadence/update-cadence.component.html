@@ -1,0 +1,11 @@
+<omni-layout>
+  <div class="row mt-2">
+    <omni-cadence-form
+      [mode]="formModeEnum.EDIT"
+      [cadence$]="cadence"
+      (onSubmit)="onSubmit($event)"
+      (onCancel)="onCancel()"
+      (onDelete)="onDelete($event)">
+    </omni-cadence-form>
+  </div>
+</omni-layout>

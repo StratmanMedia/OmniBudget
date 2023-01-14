@@ -42,7 +42,6 @@ export class CategoryFormComponent implements OnInit {
         this.categoryForm = this.buildForm(this._category);
       })
     ).subscribe();
-    this.categoryForm = this.buildForm(this._category);
     this.parentCategories = this._categoryService.getAll().pipe(
       map(categories => {
         return categories.sort((a, b) => { return SortUtil.sort(a.name, b.name) });

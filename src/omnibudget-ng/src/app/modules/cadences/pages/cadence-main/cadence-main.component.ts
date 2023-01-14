@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { combineLatest, map, Observable, Subject, takeUntil } from 'rxjs';
 import { AccountService } from 'src/app/core/accounts/account.service';
 import { CategoryService } from 'src/app/core/categories/category.service';
@@ -21,6 +22,7 @@ export class CadenceMainComponent implements OnInit {
   cadenceList: Observable<CadenceModel[]>;
 
   constructor(
+    private _router: Router,
     private _cadenceService: CadenceService,
     private _accountService: AccountService,
     private _categoryService: CategoryService) { }
@@ -33,7 +35,6 @@ export class CadenceMainComponent implements OnInit {
     ]).pipe(
       takeUntil(this.ngDestroy$),
       map(([cadences, accounts, categories]) => {
-        this._logger.debug(`New data emitted. cadences=${JSON.stringify(cadences)}, accounts=${JSON.stringify(accounts)}, categories=${JSON.stringify(categories)}`);
         const cadenceList = cadences.map(cadence => {
           return <CadenceModel>{
             ...cadence,
@@ -48,6 +49,6 @@ export class CadenceMainComponent implements OnInit {
   }
 
   editCadence(guid: string): void {
-
+    this._router.navigateByUrl('/app/cadences/' + guid);
   }
 }

@@ -17,7 +17,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let cadence of cadenceList | async" (click)="editCadence(cadence.guid)">
+          <tr *ngFor="let cadence of cadenceList | async" class="pointer" (click)="editCadence(cadence.guid)">
             <td>{{cadence.name}}</td>
             <td>{{cadence.account?.name}}</td>
             <td>{{cadence.category?.name}}</td>

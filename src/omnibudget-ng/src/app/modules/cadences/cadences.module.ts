@@ -6,12 +6,14 @@ import { CadenceFormComponent } from './components/cadence-form/cadence-form.com
 import { ReactiveFormsModule } from '@angular/forms';
 import { CreateCadenceComponent } from './pages/create-cadence/create-cadence.component';
 import { OmniBudgetCommonModule } from '../omni-budget-common/omni-budget-common.module';
+import { UpdateCadenceComponent } from './pages/update-cadence/update-cadence.component';
 
 @NgModule({
   declarations: [
     CadenceMainComponent,
     CadenceFormComponent,
-    CreateCadenceComponent
+    CreateCadenceComponent,
+    UpdateCadenceComponent
   ],
   imports: [
     CommonModule,
