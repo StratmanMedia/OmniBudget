@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { BehaviorSubject, combineLatest, map, Observable, of, Subject, takeUntil, tap } from 'rxjs';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { BehaviorSubject, combineLatest, Observable, of, Subject, takeUntil, tap } from 'rxjs';
 import { AccountModel } from 'src/app/core/accounts/account-model';
 import { AccountService } from 'src/app/core/accounts/account.service';
 import { CategoryModel } from 'src/app/core/categories/category-model';
@@ -21,16 +21,16 @@ export class CadenceFormComponent implements OnInit {
     callerName: "CadenceFormComponent"
   });
   private ngDestroy$ = new Subject<boolean>();
-  private _cadence: CadenceModel | undefined;
   
   @Input() mode: FormMode;
-  @Input() cadence$ = new Observable<CadenceModel | undefined>();
+  @Input() cadence: CadenceModel | undefined;
+  @Input() cadence$: Observable<CadenceModel | undefined> | undefined;
   @Output() onSubmit: EventEmitter<CadenceModel> = new EventEmitter<CadenceModel>();
   @Output() onCancel: EventEmitter<void> = new EventEmitter();
   @Output() onDelete: EventEmitter<string> = new EventEmitter<string>();
   
   initialized$ = new BehaviorSubject<boolean>(false);
-  cadenceForm = new FormGroup({});
+  cadenceForm = this.buildForm(undefined);
   accounts: Observable<AccountModel[]>;
   categories: Observable<CategoryModel[]>;
   timePeriods: string[] = [];
@@ -42,19 +42,17 @@ export class CadenceFormComponent implements OnInit {
 
   ngOnInit(): void {
     this._logger.debug(`Initializing.`);
-    this.cadence$.pipe(
+    this.cadence$?.pipe(
+      takeUntil(this.ngDestroy$),
       tap(cadence => {
         this._logger.debug(`New cadence emitted.`);
-        this._cadence = cadence;
         this.cadenceForm = this.buildForm(cadence);
       })
     ).subscribe();
-    combineLatest([this.cadence$, this._accountService.getAll(), this._categoryService.getAll()]).pipe(
+    combineLatest([this._accountService.getAll(), this._categoryService.getAll()]).pipe(
       takeUntil(this.ngDestroy$),
-      tap(([cadence, accounts, categories]) => {
+      tap(([accounts, categories]) => {
         this._logger.debug(`New data emitted.`);
-        this._cadence = cadence;
-        this.cadenceForm = this.buildForm(cadence);
         this.accounts = of(accounts.sort((a, b) => { return SortUtil.sort(a.name, b.name); }));
         this.categories = of(categories.sort((a, b) => { return SortUtil.sort(a.name, b.name); }));
         this.initialized$.next(true);
@@ -79,11 +77,11 @@ export class CadenceFormComponent implements OnInit {
     this._logger.debug(`Time period changed. Value=${e.target.value}`);
   }
 
-  submitForm() {
+  submitForm(): void {
     this._logger.debug(`Form submitted. form=${JSON.stringify(this.cadenceForm.value)}`);
     const timePeriod = <string>this.cadenceForm.get('timePeriod')?.value;
     const cadence = <CadenceModel>{
-      guid: this._cadence?.guid,
+      guid: this.cadenceForm.get('guid')?.value,
       name: this.cadenceForm.get('name')?.value,
       description: this.cadenceForm.get('description')?.value,
       accountGuid: this.cadenceForm.get('account')?.value,
@@ -99,8 +97,8 @@ export class CadenceFormComponent implements OnInit {
     this.onCancel.emit();
   }
 
-  deleteClicked() {
-    this.onDelete.emit(this._cadence?.guid);
+  deleteClicked(): void {
+    this.onDelete.emit(<string>this.cadenceForm.get('guid')?.value);
   }
 
   private buildForm(cadence: CadenceModel | undefined): FormGroup {

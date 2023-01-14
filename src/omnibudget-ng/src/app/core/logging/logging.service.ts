@@ -10,31 +10,31 @@ export class LoggingService {
 
   trace(message: string) {
     if (this._options.minimumLogLevel || 0 <= LogLevel.TRACE) {
-      console.log(`${this._options.callerName}:TRACE: ${message}`);
+      console.log(`${this._options.callerName}:TRACE: ${this.truncate(message)}`);
     }
   }
 
   debug(message: string) {
     if (this._options.minimumLogLevel || 0 <= LogLevel.DEBUG) {
-      console.log(`${this._options.callerName}:DEBUG: ${message}`);
+      console.log(`${this._options.callerName}:DEBUG: ${this.truncate(message)}`);
     }
   }
 
   info(message: string) {
     if (this._options.minimumLogLevel || 0 <= LogLevel.INFO) {
-      console.log(`${this._options.callerName}:INFO: ${message}`);
+      console.log(`${this._options.callerName}:INFO: ${this.truncate(message)}`);
     }
   }
 
   warn(message: string) {
     if (this._options.minimumLogLevel || 0 <= LogLevel.WARN) {
-      console.warn(`${this._options.callerName}:WARN: ${message}`);
+      console.warn(`${this._options.callerName}:WARN: ${this.truncate(message)}`);
     }
   }
 
   error(message: string) {
     if (this._options.minimumLogLevel || 0 <= LogLevel.ERROR) {
-      console.error(`${this._options.callerName}:ERROR: ${message}`);
+      console.error(`${this._options.callerName}:ERROR: ${this.truncate(message)}`);
     }
   }
 
@@ -51,5 +51,10 @@ export class LoggingService {
         default: { this._options.minimumLogLevel = LogLevel.ERROR; break; }
       }
     }
+  }
+
+  private truncate(message: string): string {
+    const ellipsis = (message.length > 255) ? '...' : '';
+    return `${message.substring(0,255)}${ellipsis}`; 
   }
 }

@@ -13,7 +13,7 @@ import { FormMode } from 'src/app/shared/classes/form-mode';
 })
 export class CreateCadenceComponent implements OnInit {
   private _logger: LoggingService = new LoggingService({
-    callerName: "CadenceMainComponent"
+    callerName: "CreateCadenceComponent"
   });
   private ngDestroy$ = new Subject<boolean>();
   
